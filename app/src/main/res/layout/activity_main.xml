@@ -316,6 +316,35 @@ android:visibility="visible"
                 android:text="Youtube Link"
                 android:textColor="@color/colorText"
                 android:background="@drawable/quran_back"/>
+
+
+
+
+
+
+
+
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="30dp"
+
+                android:id="@+id/video"
+                android:layout_below="@+id/UYL"
+                android:textSize="12sp"
+                android:layout_marginTop="10dp"
+                android:text="Video Link"
+                android:textColor="@color/colorText"
+                android:background="@drawable/quran_back"/>
+
+
+
+
+
+
+
+
         </RelativeLayout>
 
 

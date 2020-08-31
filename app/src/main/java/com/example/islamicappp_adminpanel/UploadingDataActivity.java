@@ -65,6 +65,8 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
     VideoView videoView;
     String BookURl;
     String Booknumber;
+    String my_val="";
+
     String curr_Time;
     FirebaseStorage firebaseStorage;
     StorageReference storageReference;
@@ -75,6 +77,8 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
     ProgressDialog pd;
     String[] Books = { "","Book 1", "Book 2", "Book 3", "Book 4", "Book 5"
             , "Book 6", "Book 7", "Book 8", "Book 9", "Book 10", "Book 11", "Book 12"};
+    String[] video = { "","video 1", "video 2", "video 3", "video 4", "video 5"
+            , "video 6", "video 7", "video 8", "video 9", "video 10", "video 11", "video 12"};
     ProgressDialog progressDialog;
     StorageReference path;
     Uri pdf_uri;
@@ -343,10 +347,22 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
                 spin.setAdapter(aa);
                 break;
 
+            case "video":
+                To="video";
+                my_val="true";
+                Data.setVisibility(View.VISIBLE);
+                Data.setHint("Enter video link");
+                spin.setVisibility(View.VISIBLE);
+                submit.setText("Upload video");
+                ArrayAdapter aaa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, video);
+                aaa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spin.setAdapter(aaa);
+                break;
 
 
             case "VL":
                 To="VL";
+
                 Data.setVisibility(View.GONE);
                 videolyt.setVisibility(View.VISIBLE);
                 submit.setVisibility(View.INVISIBLE);
@@ -410,10 +426,39 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
                     }
                     else
                     {
-                        if (!TextUtils.isEmpty(BookName)){
+                        if (!TextUtils.isEmpty(BookName))
+                        {
 
-                            select_book();
-                        }else{
+                            if (my_val.equals("true"))
+                            {
+                                Toast.makeText(this, ""+BookName, Toast.LENGTH_SHORT).show();
+
+
+                                if (!TextUtils.isEmpty(Booknumber))
+                                {
+                                    HashMap hashMap=new HashMap();
+                                    hashMap.put("url",BookName);
+                                    DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference();
+                                    databaseReference.child("video_data").child(Booknumber).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener() {
+                                        @Override
+                                        public void onComplete(@NonNull Task task) {
+                                               if (task.isComplete())
+                                               {
+                                                   Toast.makeText(UploadingDataActivity.this, "dome", Toast.LENGTH_SHORT).show();
+                                               }
+                                        }
+                                    });
+
+
+                                }
+                            }
+                            else
+                            {
+                                select_book();
+
+                            }
+                        }
+                        else{
                             BookName="";
                         }
 
@@ -428,6 +473,62 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
                 break;
 
 
+            case "video":
+                BookName=Data.getText().toString().trim();
+                if (!TextUtils.isEmpty(Booknumber))
+                {
+
+                    if (Booknumber.equals("select book"))
+                    {
+
+                        Toast.makeText(this, "select book", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        if (!TextUtils.isEmpty(BookName))
+                        {
+
+                            if (my_val.equals("true"))
+                            {
+                                Toast.makeText(this, ""+BookName, Toast.LENGTH_SHORT).show();
+
+
+                                if (!TextUtils.isEmpty(Booknumber))
+                                {
+                                    HashMap hashMap=new HashMap();
+                                    hashMap.put("url",BookName);
+                                    DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference();
+                                    databaseReference.child("video_data").child(Booknumber).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener() {
+                                        @Override
+                                        public void onComplete(@NonNull Task task) {
+                                            if (task.isComplete())
+                                            {
+                                                Toast.makeText(UploadingDataActivity.this, "dome", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+
+
+                                }
+                            }
+                            else
+                            {
+
+                            }
+                        }
+                        else{
+                            BookName="";
+                        }
+
+                    }
+
+
+
+                }
+                else {
+                    Toast.makeText(this, "No, Book selected", Toast.LENGTH_SHORT).show();
+                }
+                break;
             case "UYL":
 
                 UploadmainApp_simpleData("Youtube");
