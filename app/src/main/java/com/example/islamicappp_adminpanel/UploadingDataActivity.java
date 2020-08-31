@@ -432,34 +432,9 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
                         if (!TextUtils.isEmpty(BookName))
                         {
 
-                            if (my_val.equals("true"))
-                            {
-                                Toast.makeText(this, ""+BookName, Toast.LENGTH_SHORT).show();
-
-
-                                if (!TextUtils.isEmpty(Booknumber))
-                                {
-                                    HashMap hashMap=new HashMap();
-                                    hashMap.put("url",BookName);
-                                    DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference();
-                                    databaseReference.child("video_data").child(Booknumber).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener() {
-                                        @Override
-                                        public void onComplete(@NonNull Task task) {
-                                               if (task.isComplete())
-                                               {
-                                                   Toast.makeText(UploadingDataActivity.this, "dome", Toast.LENGTH_SHORT).show();
-                                               }
-                                        }
-                                    });
-
-
-                                }
-                            }
-                            else
-                            {
                                 select_book();
 
-                            }
+
                         }
                         else{
                             BookName="";
