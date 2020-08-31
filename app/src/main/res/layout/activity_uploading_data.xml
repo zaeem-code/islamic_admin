@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/bg1"
+    android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:src="@drawable/backarro"
+        android:clickable="true"
+        android:id="@+id/back"/>
+    <TextView
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:paddingVertical="2dp"
+        android:text="Admin\nMenue"
+        android:textSize="18sp"
+        android:background="@drawable/corner"
+        android:textColor="@color/colorText"
+        android:textAllCaps="true"
+        android:id="@+id/title"
+        android:layout_alignParentTop="true"
+        android:gravity="center"/>
+
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_marginTop="29dp"
+        android:layout_height="wrap_content"
+        android:minHeight="200dp"
+        android:layout_below="@id/title"
+        android:background="@drawable/corner_white"
+        android:textStyle="bold"
+        android:id="@+id/ED"
+        android:textColor="@color/colorText"
+        android:gravity="center"
+        android:textColorHint="@color/colorText"
+        android:textSize="14sp"
+        android:layout_marginHorizontal="5dp"
+        android:hint="Typer here....."
+        />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:background="@drawable/corner_white"
+        android:layout_below="@+id/title"
+        android:layout_marginTop="30dp"
+        android:layout_marginHorizontal="40dp"
+        android:layout_height="wrap_content">
+        <Spinner
+        android:popupBackground="@color/colorText"
+        android:id="@+id/spinner"
+            android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:backgroundTint="@color/colorText"
+      />
+
+
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_below="@+id/title"
+        android:layout_marginTop="30dp"
+        android:layout_marginHorizontal="40dp"
+        android:id="@+id/vidyt"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:weightSum="1">
+        <com.airbnb.lottie.LottieAnimationView
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/glry"
+            android:layout_width="0dp"
+            tools:ignore="ContentDescription"
+            android:layout_height="match_parent"
+            android:layout_weight=".4"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight=".6"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+
+            android:textStyle="normal"
+            android:text="select Image"
+            android:textSize="15sp"
+            android:background="@drawable/corner"
+            android:textColor="@color/colorText"
+            android:textAllCaps="true"
+            android:id="@+id/loadvid"
+
+            android:gravity="center"/>
+
+    </LinearLayout>
+
+
+    <VideoView
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_marginVertical="25dp"
+        android:layout_height="wrap_content"
+        android:minHeight="250dp"
+        android:layout_above="@+id/Submit"
+        android:layout_below="@id/vidyt"
+
+
+        android:id="@+id/videoView"
+
+
+        />
+
+
+
+    <Button
+        android:layout_width="match_parent"
+     android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="50dp"
+        android:id="@+id/Submit"
+
+
+        android:textSize="12sp"
+        android:text="Submit"
+        android:textColor="@color/colorText"
+        android:background="@drawable/quran_back"/>
+
+</RelativeLayout>
