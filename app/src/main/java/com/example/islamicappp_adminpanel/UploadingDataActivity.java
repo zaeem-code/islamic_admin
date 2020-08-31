@@ -38,6 +38,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,7 +53,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.StringTokenizer;
+import java.util.UUID;
 
 import static java.io.File.separator;
 
@@ -746,7 +749,8 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
         String file_name = sb.toString();
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = this.firebaseStorage.getReference();
-        path = storageReference.child("image").child("img1");
+
+        path = storageReference.child("image").child(UUID.randomUUID().toString());
 
 
         path.putFile(pdf_uri2).addOnSuccessListener((OnSuccessListener) new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -770,7 +774,7 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
                         hashMap.put("time",curr_Time);
                         hashMap.put(NotificationCompat.CATEGORY_STATUS, "send");
                         hashMap.put("uri", uri.toString());
-                        databaseReference.child("Image").updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener() {
+                        databaseReference.child("Image").push().updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener() {
                             public void onComplete(Task task) {
                                 if (task.isSuccessful())
 
