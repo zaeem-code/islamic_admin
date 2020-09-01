@@ -363,12 +363,12 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
                 break;
 
             case "video_urdu":
-                To="video";
+                To="video_urdu";
                 my_val="true";
                 Data.setVisibility(View.VISIBLE);
                 Data.setHint("Enter video urdu link");
                 spin.setVisibility(View.VISIBLE);
-                submit.setText("Upload video");
+                submit.setText("Upload video urdu");
                 ArrayAdapter aaaa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, video);
                 aaaa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spin.setAdapter(aaaa);
