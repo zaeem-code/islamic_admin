@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         findViewById(R.id.back).setOnClickListener(this);
         findViewById(R.id.Hd).setOnClickListener(this);
 
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.UYL).setOnClickListener(this);
         findViewById(R.id.video).setOnClickListener(this);
 
+        findViewById(R.id.video_urdu).setOnClickListener(this);
 
 
     }
@@ -62,6 +64,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.video:
                 startActivity(new Intent(this,UploadingDataActivity.class).putExtra("chk","video"));
+                break;
+            case R.id.video_urdu:
+                startActivity(new Intent(this,UploadingDataActivity.class).putExtra("chk","video_urdu"));
                 break;
                 case R.id.WOTHD:
                 startActivity(new Intent(this,UploadingDataActivity.class).putExtra("chk","WOTHD"));

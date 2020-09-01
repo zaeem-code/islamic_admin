@@ -340,6 +340,19 @@ android:visibility="visible"
 
 
 
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="30dp"
+
+                android:id="@+id/video_urdu"
+                android:layout_below="@+id/video"
+                android:textSize="12sp"
+                android:layout_marginTop="10dp"
+                android:text="Video Link urdu"
+                android:textColor="@color/colorText"
+                android:background="@drawable/quran_back"/>
+
 
 
 

@@ -362,6 +362,18 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
                 spin.setAdapter(aaa);
                 break;
 
+            case "video_urdu":
+                To="video";
+                my_val="true";
+                Data.setVisibility(View.VISIBLE);
+                Data.setHint("Enter video urdu link");
+                spin.setVisibility(View.VISIBLE);
+                submit.setText("Upload video");
+                ArrayAdapter aaaa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, video);
+                aaaa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spin.setAdapter(aaaa);
+                break;
+
 
             case "VL":
                 To="VL";
@@ -507,6 +519,66 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
                     Toast.makeText(this, "No, Book selected", Toast.LENGTH_SHORT).show();
                 }
                 break;
+
+
+
+            case "video_urdu":
+                BookName=Data.getText().toString().trim();
+                if (!TextUtils.isEmpty(Booknumber))
+                {
+
+                    if (Booknumber.equals("select book"))
+                    {
+
+                        Toast.makeText(this, "select book", Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        if (!TextUtils.isEmpty(BookName))
+                        {
+
+                            if (my_val.equals("true"))
+                            {
+                                Toast.makeText(this, ""+BookName, Toast.LENGTH_SHORT).show();
+
+
+                                if (!TextUtils.isEmpty(Booknumber))
+                                {
+                                    HashMap hashMap=new HashMap();
+                                    hashMap.put("url",BookName);
+                                    DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference();
+                                    databaseReference.child("urdu_data").child(Booknumber).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener() {
+                                        @Override
+                                        public void onComplete(@NonNull Task task) {
+                                            if (task.isComplete())
+                                            {
+                                                Toast.makeText(UploadingDataActivity.this, "dome", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+
+
+                                }
+                            }
+                            else
+                            {
+
+                            }
+                        }
+                        else{
+                            BookName="";
+                        }
+
+                    }
+
+
+
+                }
+                else {
+                    Toast.makeText(this, "No, Book selected", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
             case "UYL":
 
                 UploadmainApp_simpleData("Youtube");
