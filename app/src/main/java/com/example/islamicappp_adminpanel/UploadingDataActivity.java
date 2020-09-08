@@ -211,10 +211,16 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
 
 
             case "UYL":
-                Data.setHint("Place Link here...");
+                Data.setHint("Place Youtube Link here... \n eg: 'https://www.youtube.com/channel/UCmV5CFC6bbZmMhqTUqZdlrg'\n\n Kalma channel Youtube  link");
 
 
                 To = "UYL";
+                break;
+            case "FBL":
+                Data.setHint("Place Facebook page ID here...\n eg:211680932500811\n Kalam channel ID");
+
+
+                To = "FBL";
                 break;
             case "ITM":
                 Data.setHint("Itlaa e Mahfil");
@@ -583,6 +589,13 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
 
                 UploadmainApp_simpleData("Youtube");
 ////
+
+
+                break;
+            case "FBL":
+
+                UploadmainApp_simpleData("Facebook");
+////
                 break;
 
 
@@ -597,7 +610,7 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
 
 
 
-    private void UploadmainApp_simpleData(final String to){
+    private void UploadmainApp_simpleData(final String item){
 
         pd.show();
         myDataBaseRef = database.getReference("Admin_DATA");
@@ -606,7 +619,7 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
 
 
 
-        myDataBaseRef.child(to).setValue(Data.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
+        myDataBaseRef.child(item).setValue(Data.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (!task.isComplete()){
@@ -615,7 +628,7 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
                 {
 
 
-                    new volleyfcm(getApplicationContext(),"New Item Uploaded","In "+to+"\n"+"check it out now");
+                    new volleyfcm(getApplicationContext(),"New Item Uploaded","In "+item+"\n"+"check it out now");
                     Toast.makeText(UploadingDataActivity.this, "successfully to upload", Toast.LENGTH_SHORT).show();
                     sendSMSMessage();
 
