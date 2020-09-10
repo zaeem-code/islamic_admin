@@ -36,10 +36,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.answer).setOnClickListener(this);
         findViewById(R.id.date_handle).setOnClickListener(this);
 
-        findViewById(R.id.UYL).setOnClickListener(this);        findViewById(R.id.FBL).setOnClickListener(this);
-        findViewById(R.id.video).setOnClickListener(this);
 
+        findViewById(R.id.UYL).setOnClickListener(this);
+        findViewById(R.id.FBL).setOnClickListener(this);
+        findViewById(R.id.video).setOnClickListener(this);
         findViewById(R.id.video_urdu).setOnClickListener(this);
+
 
 
     }
@@ -140,10 +142,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
 
-
             case R.id.K_4:
                 startActivity(new Intent(this,UploadingDataActivity.class).putExtra("chk","K_4"));
-
 
                 break;
 

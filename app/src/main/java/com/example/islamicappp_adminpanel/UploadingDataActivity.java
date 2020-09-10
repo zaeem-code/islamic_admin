@@ -647,7 +647,26 @@ switch (item){
 }
                     new volleyfcm(getApplicationContext(),"New Item Uploaded","In "+msg+"\n"+"check it out now");
                     Toast.makeText(UploadingDataActivity.this, "successfully to upload", Toast.LENGTH_SHORT).show();
-                    sendSMSMessage();
+
+
+
+
+                    if (To.equals("Itlaa e Mahfil"))
+                    {
+                        sendSMSMessage();
+
+                    }
+                    else if (To.equals("Event of the day"))
+                    {
+                        sendSMSMessage();
+
+                    }
+                    else if (To.equals("Ayat of the Day"))
+                    {
+                        sendSMSMessage();
+
+                    }
+
 
 
 
@@ -921,10 +940,13 @@ switch (item){
                 Manifest.permission.SEND_SMS)
                 != PackageManager.PERMISSION_GRANTED)
         {
+
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.SEND_SMS))
             {
-
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.SEND_SMS},
+                        10);
 
             }
             else {
@@ -932,6 +954,14 @@ switch (item){
                         new String[]{Manifest.permission.SEND_SMS},
                         10);
             }
+        }
+        else
+        {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.SEND_SMS},
+                    10);
+
         }
     }
 

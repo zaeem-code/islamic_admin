@@ -79,65 +79,15 @@ public class AdsService extends Service {
 
 
 
-
         return START_STICKY;
     }
 
 
-//
-//    Timer tmr = new Timer();
-//    TimerTask tt;
 
     public void callbgTask()
     {
         Timer();
-//        final Handler handler = new Handler();
 //
-//        tt = new TimerTask() {
-//            @Override
-//            public void run() {
-//                handler.post(new Runnable()
-//                {
-//                    public void run()
-//                    {
-//                        try {
-//
-//
-//
-//
-//                        if (second>0)
-//                        {
-//                            second--;
-//
-//                            store_second(second);
-//
-//                        }
-//                        else
-//                        {
-//                               tmr.cancel();
-//                                tmr.purge();
-//                                stopSelf();
-//
-//                        }
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//                        } catch (Exception e)
-//                        {
-//                         //   Toast.makeText(context, "io error", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//            }
-//        };
-//        tmr.schedule(tt, 0,1000); //execute in every 1000 ms
     }
 
 
@@ -156,6 +106,7 @@ public class AdsService extends Service {
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
+
         }
     }
 
@@ -227,6 +178,8 @@ private void Timer(){
         public void onFinish() {
 //            tmr.cancel();
 //            tmr.purge();
+
+
 
 
             if (yourCountDownTimer!=null){
