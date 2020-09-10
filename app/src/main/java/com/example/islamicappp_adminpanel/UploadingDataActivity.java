@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.Activity;
@@ -16,13 +15,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
+import android.telephony.MbmsStreamingSession;
 import android.telephony.SmsManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,15 +30,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,24 +49,31 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Random;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
-import static java.io.File.separator;
-
 public class UploadingDataActivity extends AppCompatActivity implements View.OnClickListener , AdapterView.OnItemSelectedListener {
     Spinner spin;
-    String BookName=" ";
+    TextView counter;
+    String item_to_be_uploaded_name =" ";
     Button submit;
     LinearLayout videolyt;
     String To;
     VideoView videoView;
     String BookURl;
-    String Booknumber;
+    String Selected_item_from_dropdown_menu;
     String my_val="";
 
     String curr_Time;
@@ -78,10 +84,10 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
     private int second=60;
     File BookFile;
     ProgressDialog pd;
-    String[] Books = { "","Book 1", "Book 2", "Book 3", "Book 4", "Book 5"
+    String[] Books = { "Select Targeted Book","Book 1", "Book 2", "Book 3", "Book 4", "Book 5"
             , "Book 6", "Book 7", "Book 8", "Book 9", "Book 10", "Book 11", "Book 12"};
-    String[] video = { "","video 1", "video 2", "video 3", "video 4", "video 5"
-            , "video 6", "video 7", "video 8", "video 9", "video 10", "video 11", "video 12"};
+    ArrayList<String> videos=new ArrayList<>();
+
     ProgressDialog progressDialog;
     StorageReference path;
     Uri pdf_uri;
@@ -100,7 +106,7 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
         Data =  findViewById(R.id.ED);
         videolyt =  findViewById(R.id.vidyt);
         videoView =  findViewById(R.id.videoView);
-
+counter=findViewById(R.id.count);
 
         pd = new ProgressDialog(this);
         pd.setMessage("Uploading  .....");
@@ -120,7 +126,7 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
 
 
 
-
+        Database_admin();
 
     }
 
@@ -151,19 +157,24 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
 
                         if (To.equals("Question of the day"))
                         {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                            {
-                                startForegroundService(new Intent(this,AdsService.class));
-                            }
-                            else
-                            {
-                                startService(new Intent(this,AdsService.class));
+                            if (TextUtils.isEmpty(isamic_count)) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    startForegroundService(new Intent(this, AdsService.class));
+                                } else {
+                                    startService(new Intent(this, AdsService.class));
+                                }
+
+                                Dataupload(To);
+
+                            }else {
+                                Toast.makeText(this, "A session is already in progress\n Sorry cant start a new one Please wait", Toast.LENGTH_SHORT).show();
                             }
 
+                        }else {
 
+                            Dataupload(To);
                         }
 
-                        Dataupload(To);
 
 
 
@@ -363,7 +374,7 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
                 Data.setHint("Enter video link");
                 spin.setVisibility(View.VISIBLE);
                 submit.setText("Upload video");
-                ArrayAdapter aaa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, video);
+                ArrayAdapter aaa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, video());
                 aaa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spin.setAdapter(aaa);
                 break;
@@ -375,7 +386,7 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
                 Data.setHint("Enter video urdu link");
                 spin.setVisibility(View.VISIBLE);
                 submit.setText("Upload video urdu");
-                ArrayAdapter aaaa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, video);
+                ArrayAdapter aaaa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, video());
                 aaaa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spin.setAdapter(aaaa);
                 break;
@@ -409,18 +420,22 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
     //////////////////////spinner
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (!(position ==0))
+        if (position !=0)
         {
-            String b=Books[position];
-            Toast.makeText(this, ""+b, Toast.LENGTH_SHORT).show();
 
-            // book select hony py uska path get karna ha yaha sy babaa g univrsal cariable mai
-            Booknumber=b;
+
+             Selected_item_from_dropdown_menu =parent.getItemAtPosition(position).toString();
 
 
 
+
+        }else {
+            Selected_item_from_dropdown_menu ="";
 
         }
+
+        ((TextView) parent.getChildAt(0)).setTextColor(Color.parseColor("#ffecc73a"));
+
     }
 
     @Override
@@ -434,20 +449,20 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
 
         switch (To){
             case "UB":
-                BookName=Data.getText().toString().trim();
-                if (!TextUtils.isEmpty(Booknumber))
+                item_to_be_uploaded_name =Data.getText().toString().trim();
+                if (!TextUtils.isEmpty(Selected_item_from_dropdown_menu))
                 {
                     //  bookUpload(BookURl,Booknumber);
 //    Toast.makeText(this, " Book"+Booknumber, Toast.LENGTH_SHORT).show();
 
-                    if (Booknumber.equals("select book"))
+                    if (Selected_item_from_dropdown_menu.equals("select book"))
                     {
 
                         Toast.makeText(this, "select book", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
-                        if (!TextUtils.isEmpty(BookName))
+                        if (!TextUtils.isEmpty(item_to_be_uploaded_name))
                         {
 
                                 select_book();
@@ -455,7 +470,7 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
 
                         }
                         else{
-                            BookName="";
+                            item_to_be_uploaded_name ="";
                         }
 
                     }
@@ -464,42 +479,34 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
 
                 }
                 else {
-                    Toast.makeText(this, "No, Book selected", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "No, Targeted Book selected", Toast.LENGTH_SHORT).show();
                 }
                 break;
 
 
             case "video":
-                BookName=Data.getText().toString().trim();
-                if (!TextUtils.isEmpty(Booknumber))
+                item_to_be_uploaded_name =Data.getText().toString().trim();
+                if (!TextUtils.isEmpty(Selected_item_from_dropdown_menu))
                 {
-
-                    if (Booknumber.equals("select book"))
-                    {
-
-                        Toast.makeText(this, "select book", Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
-                        if (!TextUtils.isEmpty(BookName))
+                        if (!TextUtils.isEmpty(item_to_be_uploaded_name))
                         {
 
                             if (my_val.equals("true"))
                             {
-                                Toast.makeText(this, ""+BookName, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, ""+ item_to_be_uploaded_name, Toast.LENGTH_SHORT).show();
 
 
-                                if (!TextUtils.isEmpty(Booknumber))
+                                if (!TextUtils.isEmpty(Selected_item_from_dropdown_menu))
                                 {
                                     HashMap hashMap=new HashMap();
-                                    hashMap.put("url",BookName);
+                                    hashMap.put("url", item_to_be_uploaded_name);
                                     DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference();
-                                    databaseReference.child("video_data").child(Booknumber).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener() {
+                                    databaseReference.child("video_data").child(Selected_item_from_dropdown_menu).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener() {
                                         @Override
                                         public void onComplete(@NonNull Task task) {
                                             if (task.isComplete())
                                             {
-                                                Toast.makeText(UploadingDataActivity.this, "dome", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(UploadingDataActivity.this, "Uploaded successfully", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
@@ -513,8 +520,10 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
                             }
                         }
                         else{
-                            BookName="";
-                        }
+
+                            Toast.makeText(this, "No, Targeted Video selected", Toast.LENGTH_SHORT).show();
+                            item_to_be_uploaded_name ="";
+
 
                     }
 
@@ -522,43 +531,37 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
 
                 }
                 else {
-                    Toast.makeText(this, "No, Book selected", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Hey!\nNo Targeted Video selected", Toast.LENGTH_SHORT).show();
                 }
                 break;
 
 
 
             case "video_urdu":
-                BookName=Data.getText().toString().trim();
-                if (!TextUtils.isEmpty(Booknumber))
+                item_to_be_uploaded_name =Data.getText().toString().trim();
+                if (!TextUtils.isEmpty(Selected_item_from_dropdown_menu))
                 {
 
-                    if (Booknumber.equals("select book"))
-                    {
 
-                        Toast.makeText(this, "select book", Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
-                        if (!TextUtils.isEmpty(BookName))
+                        if (!TextUtils.isEmpty(item_to_be_uploaded_name))
                         {
 
                             if (my_val.equals("true"))
                             {
-                                Toast.makeText(this, ""+BookName, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, ""+ item_to_be_uploaded_name, Toast.LENGTH_SHORT).show();
 
 
-                                if (!TextUtils.isEmpty(Booknumber))
+                                if (!TextUtils.isEmpty(Selected_item_from_dropdown_menu))
                                 {
                                     HashMap hashMap=new HashMap();
-                                    hashMap.put("url",BookName);
+                                    hashMap.put("url", item_to_be_uploaded_name);
                                     DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference();
-                                    databaseReference.child("urdu_data").child(Booknumber).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener() {
+                                    databaseReference.child("urdu_data").child(Selected_item_from_dropdown_menu).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener() {
                                         @Override
                                         public void onComplete(@NonNull Task task) {
                                             if (task.isComplete())
                                             {
-                                                Toast.makeText(UploadingDataActivity.this, "dome", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(UploadingDataActivity.this, "Uploaded successfully", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
@@ -569,19 +572,21 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
                             else
                             {
 
+                                Toast.makeText(this, "No, Targeted Video selected", Toast.LENGTH_SHORT).show();
+
                             }
                         }
                         else{
-                            BookName="";
+                            item_to_be_uploaded_name ="";
                         }
 
-                    }
+
 
 
 
                 }
                 else {
-                    Toast.makeText(this, "No, Book selected", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Hey!\nNo Targeted Video selected", Toast.LENGTH_SHORT).show();
                 }
                 break;
 
@@ -626,9 +631,21 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
                     Toast.makeText(UploadingDataActivity.this, "Failed to upload", Toast.LENGTH_SHORT).show();
                 }else
                 {
+String msg=item;
+switch (item){
+    case "k_1":
+        msg="Kalma_o_Darood";
+        break;
+    case "K_2":
+    case "K_3":
+    case "K_4":
+    case "K_5":
 
+        msg="Dua_e_Astaggfar";
+        break;
 
-                    new volleyfcm(getApplicationContext(),"New Item Uploaded","In "+item+"\n"+"check it out now");
+}
+                    new volleyfcm(getApplicationContext(),"New Item Uploaded","In "+msg+"\n"+"check it out now");
                     Toast.makeText(UploadingDataActivity.this, "successfully to upload", Toast.LENGTH_SHORT).show();
                     sendSMSMessage();
 
@@ -709,9 +726,9 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
             Uri uri = pdf_uri;
             if (uri != null)
             {
-                if (!TextUtils.isEmpty(Booknumber))
+                if (!TextUtils.isEmpty(Selected_item_from_dropdown_menu))
                 {
-                    Upload_file(uri, imageName, uri.getPath(),Booknumber);
+                    Upload_file(uri, imageName, uri.getPath(), Selected_item_from_dropdown_menu);
 
                 }
             }
@@ -767,7 +784,7 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
                                 hashMap.put("file_name", imageName);
                                 hashMap.put("file_path", pdf_path);
                                 hashMap.put("download_status", "fail");
-                                hashMap.put("Book_name", BookName);
+                                hashMap.put("Book_name", item_to_be_uploaded_name);
 
                                 databaseReference.child("Book_data").child(book_pos).updateChildren(hashMap)
                                         .addOnCompleteListener(new OnCompleteListener() {
@@ -1094,9 +1111,64 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
 
 
 
+private ArrayList<String> video(){
+videos.clear();
+for (int i=0; i<=120; i++) {
+    if (i == 0) {
+
+        videos.add("Select Targeted video");
+    } else {
+        videos.add("video " + i);
+    }
+
+}
+return videos;
+}
+
+    String isamic_count= "";
+
+    public void Database_admin()
+    {
+try {
 
 
+    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Admin_DATA");
+    databaseReference.addValueEventListener(new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            if (dataSnapshot.hasChildren()) {
+                try {
+                    isamic_count = dataSnapshot.child("second").getValue().toString();
+                } catch (Exception e) {
+                }
 
+//isko less then one karna ha
+                if (Integer.parseInt(isamic_count) > 1) {
+                    counter.setVisibility(View.VISIBLE);
+                    counter.setText("Reminder:\n" +
+                            "     Currently we have an ongoing session of 'Question of the Day' \n" +
+                            "     Remaining time is: " + (Integer.parseInt(isamic_count) + 1) + " sec. \n\n " + "Please until then DO NOT TURN OFF internet, admin app or phone itself many factory can affect your counter counting like POWER SAVING MODE, DATA USAGE RESTRICTION, BACKGROUND USAGE etc.. make sure you meet all the require conditions");
+                } else {
+                    counter.setVisibility(View.GONE);
+                    isamic_count="";
+                }
+
+
+            }
+
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    });
+
+
+}catch (Exception e){
+
+}
+    }
 
 
 }

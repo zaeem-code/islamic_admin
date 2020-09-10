@@ -164,10 +164,10 @@
                 android:layout_marginHorizontal="30dp"
 
                 android:id="@+id/K_2"
-                android:layout_below="@+id/K_0"
+                android:layout_below="@+id/K_1"
                 android:textSize="12sp"
                 android:layout_marginTop="10dp"
-                android:text="Kalma Darrod"
+                android:text="Dua Astagfar 1"
                 android:textColor="@color/colorText"
                 android:background="@drawable/quran_back"/>
 
@@ -181,7 +181,7 @@
                 android:layout_below="@+id/K_2"
                 android:textSize="12sp"
                 android:layout_marginTop="10dp"
-                android:text="Kalma Darrod"
+                android:text="Dua Astagfar 2"
                 android:textColor="@color/colorText"
                 android:background="@drawable/quran_back"/>
 
@@ -197,7 +197,7 @@
                 android:layout_below="@+id/K_3"
                 android:textSize="12sp"
                 android:layout_marginTop="10dp"
-                android:text="Kalma Darrod"
+                android:text="Dua Astagfar 3"
                 android:textColor="@color/colorText"
                 android:background="@drawable/quran_back"/>
 
@@ -210,7 +210,7 @@
                 android:layout_below="@+id/K_4"
                 android:textSize="12sp"
                 android:layout_marginTop="10dp"
-                android:text="Kalma Darrod"
+                android:text="Dua Astagfar 4"
                 android:textColor="@color/colorText"
                 android:background="@drawable/quran_back"/>
 
@@ -313,7 +313,7 @@ android:visibility="visible"
                 android:layout_below="@+id/date_handle"
                 android:textSize="12sp"
                 android:layout_marginTop="10dp"
-                android:text="Youtube Link"
+                android:text="Youtube Channel Link"
                 android:textColor="@color/colorText"
                 android:background="@drawable/quran_back"/>
 
@@ -335,7 +335,7 @@ android:visibility="visible"
                 android:layout_below="@+id/UYL"
                 android:textSize="12sp"
                 android:layout_marginTop="10dp"
-                android:text="Video Link"
+                android:text="Beautiful Recitation Video Link"
                 android:textColor="@color/colorText"
                 android:background="@drawable/quran_back"/>
 
@@ -350,7 +350,7 @@ android:visibility="visible"
                 android:layout_below="@+id/video"
                 android:textSize="12sp"
                 android:layout_marginTop="10dp"
-                android:text="Video Link urdu"
+                android:text="Urdu Translation Video Link"
                 android:textColor="@color/colorText"
                 android:background="@drawable/quran_back"/>
 
@@ -364,7 +364,7 @@ android:visibility="visible"
                 android:layout_below="@+id/video_urdu"
                 android:textSize="12sp"
                 android:layout_marginTop="10dp"
-                android:text="Facebook Link"
+                android:text="Facebook Page Link"
                 android:textColor="@color/colorText"
                 android:background="@drawable/quran_back"/>
 

@@ -9,9 +9,11 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -31,7 +33,7 @@ public class AdsService extends Service {
 
     Context context;
     private Integer counter;
-    int second=1800;
+    int second=30;
 
 
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
@@ -82,59 +84,60 @@ public class AdsService extends Service {
     }
 
 
-
-    Timer tmr = new Timer();
-    TimerTask tt;
+//
+//    Timer tmr = new Timer();
+//    TimerTask tt;
 
     public void callbgTask()
     {
-        final Handler handler = new Handler();
-
-        tt = new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(new Runnable()
-                {
-                    public void run()
-                    {
-                        try {
-
-
-
-
-                        if (second>0)
-                        {
-                            second--;
-
-                            store_second(second);
-
-                        }
-                        else
-                        {
-                               tmr.cancel();
-                                tmr.purge();
-                                stopSelf();
-
-                        }
-
-
-
-
-
-
-
-
-
-
-                        } catch (Exception e)
-                        {
-                         //   Toast.makeText(context, "io error", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        };
-        tmr.schedule(tt, 0,1000); //execute in every 1000 ms
+        Timer();
+//        final Handler handler = new Handler();
+//
+//        tt = new TimerTask() {
+//            @Override
+//            public void run() {
+//                handler.post(new Runnable()
+//                {
+//                    public void run()
+//                    {
+//                        try {
+//
+//
+//
+//
+//                        if (second>0)
+//                        {
+//                            second--;
+//
+//                            store_second(second);
+//
+//                        }
+//                        else
+//                        {
+//                               tmr.cancel();
+//                                tmr.purge();
+//                                stopSelf();
+//
+//                        }
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//                        } catch (Exception e)
+//                        {
+//                         //   Toast.makeText(context, "io error", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
+//            }
+//        };
+//        tmr.schedule(tt, 0,1000); //execute in every 1000 ms
     }
 
 
@@ -196,7 +199,44 @@ public class AdsService extends Service {
     }
 
 
+    CountDownTimer yourCountDownTimer;
+private void Timer(){
+    yourCountDownTimer= new CountDownTimer(second*1000, 1000) {
+
+        public void onTick(long millisUntilFinished) {
+            if ((int) (millisUntilFinished/1000)>0)
+            {
+
+                store_second((int) (millisUntilFinished/1000));
+
+            }
+            else
+            {
+                if (yourCountDownTimer!=null){
+
+                    yourCountDownTimer.cancel();
+                }
+                stopSelf();
 
 
+            }
+            Log.v("dell","seconde left :  "+(int) (millisUntilFinished/1000));
+
+        }
+
+        public void onFinish() {
+//            tmr.cancel();
+//            tmr.purge();
+
+
+            if (yourCountDownTimer!=null){
+
+                yourCountDownTimer.cancel();
+            }
+            stopSelf();
+        }
+
+    }.start();
+}
 
 }
