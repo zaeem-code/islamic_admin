@@ -656,16 +656,12 @@ switch (item){
                         sendSMSMessage();
 
                     }
-                    else if (To.equals("Event of the day"))
+                    else if (To.equals("Question of the Day"))
                     {
                         sendSMSMessage();
 
                     }
-                    else if (To.equals("Ayat of the Day"))
-                    {
-                        sendSMSMessage();
 
-                    }
 
 
 
@@ -1173,14 +1169,22 @@ try {
                 }
 
 //isko less then one karna ha
-                if (Integer.parseInt(isamic_count) > 1) {
-                    counter.setVisibility(View.VISIBLE);
-                    counter.setText("Reminder:\n" +
-                            "     Currently we have an ongoing session of 'Question of the Day' \n" +
-                            "     Remaining time is: " + (Integer.parseInt(isamic_count) + 1) + " sec. \n\n " + "Please until then DO NOT TURN OFF internet, admin app or phone itself many factory can affect your counter counting like POWER SAVING MODE, DATA USAGE RESTRICTION, BACKGROUND USAGE etc.. make sure you meet all the require conditions");
-                } else {
+                try {
+
+
+                    if (Integer.parseInt(isamic_count) > 1) {
+                        counter.setVisibility(View.VISIBLE);
+                        counter.setText("Reminder:\n" +
+                                "     Currently we have an ongoing session of 'Question of the Day' \n" +
+                                "     Remaining time is: " + isamic_count + " sec. \n\n " + "Please until then DO NOT TURN OFF internet, admin app or phone itself many factory can affect your counter counting like POWER SAVING MODE, DATA USAGE RESTRICTION, BACKGROUND USAGE etc.. make sure you meet all the require conditions");
+                    } else {
+                        counter.setVisibility(View.GONE);
+                        isamic_count = "";
+                    }
+                }catch (Exception e){
                     counter.setVisibility(View.GONE);
-                    isamic_count="";
+                    isamic_count = "";
+
                 }
 
 
