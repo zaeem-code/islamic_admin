@@ -35,7 +35,7 @@ public class AdsService extends Service {
 
     Context context;
     private Integer counter;
-    int second = 120;
+    int second = 300;
     String chk = "s";
 
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
