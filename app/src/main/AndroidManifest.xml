@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.islamicappp_adminpanel">
-
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -29,7 +29,8 @@
 
 
         <activity android:name=".UploadingDataActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity"
+            android:showOnLockScreen="true"/>
         <activity android:name=".SigninActivity" />
         <activity android:name=".AnswerActivity" />
 

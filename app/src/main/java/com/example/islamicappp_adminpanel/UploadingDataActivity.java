@@ -7,6 +7,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -19,11 +20,13 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.telephony.MbmsStreamingSession;
 import android.telephony.SmsManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -81,7 +84,7 @@ public class UploadingDataActivity extends AppCompatActivity implements View.OnC
     StorageReference storageReference;
     String curr_date;
     Uri Videouri;
-    private int second=60;
+    private int second=1800;
     File BookFile;
     ProgressDialog pd;
     String[] Books = { "Select Targeted Book","Book 1", "Book 2", "Book 3", "Book 4", "Book 5"
@@ -159,9 +162,9 @@ counter=findViewById(R.id.count);
                         {
                             if (TextUtils.isEmpty(isamic_count)) {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    startForegroundService(new Intent(this, AdsService.class));
+                                    startForegroundService(new Intent(this, AdsService.class).setAction("start"));
                                 } else {
-                                    startService(new Intent(this, AdsService.class));
+                                    startService(new Intent(this, AdsService.class).setAction("start")  );
                                 }
 
                                 Dataupload(To);
@@ -222,8 +225,9 @@ counter=findViewById(R.id.count);
 
 
             case "UYL":
-                Data.setHint("Place Youtube Link here... \n eg: 'https://www.youtube.com/channel/UCmV5CFC6bbZmMhqTUqZdlrg'\n\n Kalma channel Youtube  link");
+                Data.setHint("Place paste Recent Mehfil Youtube Link here.\n  eg: hfKogJ1HFgo");
 
+                submit.setText("Upload video");
 
                 To = "UYL";
                 break;
@@ -231,6 +235,7 @@ counter=findViewById(R.id.count);
                 Data.setHint("Place Facebook page ID here...\n eg:211680932500811\n Kalam channel ID");
 
 
+                submit.setText("Submit Pager ID");
                 To = "FBL";
                 break;
             case "ITM":
@@ -238,6 +243,8 @@ counter=findViewById(R.id.count);
 
 
                 To = "Itlaa e Mahfil";
+
+                submit.setText("Submit Itlaa e Mahfil");
                 break;
 
 
@@ -247,6 +254,7 @@ counter=findViewById(R.id.count);
                 Data.setHint("Wazifa of the day");
                 To = "Wazifa of the day";
 
+                submit.setText("Submit Wazifa of the day");
                 break;
             case "K_0":
 
@@ -254,6 +262,7 @@ counter=findViewById(R.id.count);
                 Data.setHint("Islamic calander");
                 To = "IslamicCalander";
 
+                submit.setText("Submit calander");
                 break;
 
             case "hd":
@@ -262,6 +271,7 @@ counter=findViewById(R.id.count);
                 Data.setHint("Hadees of the day");
                 To = "hadees of the day";
 
+                submit.setText("Submit Hadeed of the day");
                 break;
 
             case "K_1":
@@ -371,7 +381,7 @@ counter=findViewById(R.id.count);
                 To="video";
                 my_val="true";
                 Data.setVisibility(View.VISIBLE);
-                Data.setHint("Enter video link");
+                Data.setHint("Enter youtube video link here.\n eg: hfKogJ1HFgo");
                 spin.setVisibility(View.VISIBLE);
                 submit.setText("Upload video");
                 ArrayAdapter aaa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, video());
@@ -383,7 +393,7 @@ counter=findViewById(R.id.count);
                 To="video_urdu";
                 my_val="true";
                 Data.setVisibility(View.VISIBLE);
-                Data.setHint("Enter video urdu link");
+                Data.setHint("Enter youtube video urdu link here.\n eg: hfKogJ1HFgo");
                 spin.setVisibility(View.VISIBLE);
                 submit.setText("Upload video urdu");
                 ArrayAdapter aaaa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, video());
@@ -656,7 +666,7 @@ switch (item){
                         sendSMSMessage();
 
                     }
-                    else if (To.equals("Question of the Day"))
+                    else if (To.equals("Question of the day"))
                     {
                         sendSMSMessage();
 
@@ -1152,9 +1162,15 @@ return videos;
 }
 
     String isamic_count= "";
+    int count=0;
 
     public void Database_admin()
     {
+        managpower();
+        if (count == 0) {
+
+            resetclockcount();count++;
+        }
 try {
 
 
@@ -1171,12 +1187,12 @@ try {
 //isko less then one karna ha
                 try {
 
-
-                    if (Integer.parseInt(isamic_count) > 1) {
+int num=Integer.parseInt(isamic_count);
+                    if (num> 1) {
                         counter.setVisibility(View.VISIBLE);
                         counter.setText("Reminder:\n" +
                                 "     Currently we have an ongoing session of 'Question of the Day' \n" +
-                                "     Remaining time is: " + isamic_count + " sec. \n\n " + "Please until then DO NOT TURN OFF internet, admin app or phone itself many factory can affect your counter counting like POWER SAVING MODE, DATA USAGE RESTRICTION, BACKGROUND USAGE etc.. make sure you meet all the require conditions");
+                                "     Remaining time is: " + (num+1) + " sec. \n\n " + "Please until then DO NOT TURN OFF internet, admin app or phone itself many factory can affect your counter counting like POWER SAVING MODE, DATA USAGE RESTRICTION, BACKGROUND USAGE etc.. make sure you meet all the require conditions");
                     } else {
                         counter.setVisibility(View.GONE);
                         isamic_count = "";
@@ -1203,6 +1219,33 @@ try {
 
 }
     }
+
+private void resetclockcount(){
+    {
+        DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference()
+                .child("Admin_DATA");
+
+        HashMap hashMap=new HashMap();
+        hashMap.put("second",1);
+
+        databaseReference.updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
+            @Override
+            public void onSuccess(Object o) {
+
+            }
+        });
+
+    }
+}
+private void managpower(){
+    PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+    @SuppressLint("InvalidWakeLockTag") PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+
+    wl.acquire();
+//    // screen and CPU will stay awake during this section
+//
+//wl.release();
+}
 
 
 }

@@ -96,7 +96,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginHorizontal="30dp"
-
+android:visibility="gone"
                 android:id="@+id/NTOE"
                 android:layout_below="@+id/EOTD"
                 android:textSize="12sp"
@@ -313,7 +313,7 @@ android:visibility="visible"
                 android:layout_below="@+id/date_handle"
                 android:textSize="12sp"
                 android:layout_marginTop="10dp"
-                android:text="Youtube Channel Link"
+                android:text="Recent Mehfil video Link"
                 android:textColor="@color/colorText"
                 android:background="@drawable/quran_back"/>
 

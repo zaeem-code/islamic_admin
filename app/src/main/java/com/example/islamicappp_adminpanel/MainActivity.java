@@ -1,9 +1,16 @@
 package com.example.islamicappp_adminpanel;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -42,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.video).setOnClickListener(this);
         findViewById(R.id.video_urdu).setOnClickListener(this);
 
-
+        greetings();
 
     }
 
@@ -51,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId())
         {
             case R.id.back:
-                finish();
+            onBackPressed();
                 break;
             case R.id.ITM:
                 startActivity(new Intent(this,UploadingDataActivity.class).putExtra("chk","ITM"));
@@ -166,6 +173,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
+    }
+
+
+
+    @Override
+    public void onBackPressed() {
+
+
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.stat_notify_error)
+                    .setTitle("Closing Activity")
+                    .setMessage("Are you sure you want to close this activity?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+
+                        }
+
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+        }
+
+    @Override
+    protected void onDestroy() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(new Intent(this, AdsService.class).setAction("exit"));
+        } else {
+            startService(new Intent(this, AdsService.class).setAction("exit"));
+        }
+        super.onDestroy();
+    }
+
+
+    private void greetings(){
+
+        try {  MediaPlayer mp = MediaPlayer.create(this, R.raw.asa);
+
+            if(! mp.isPlaying()){
+                mp.start();}
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(mp!=null){
+
+                        if(mp.isPlaying()){
+                            mp.stop();
+                        }
+                        mp.release();
+
+                    }
+                }
+            }, 5000);
+        }catch (Exception e){}
     }
 
 
